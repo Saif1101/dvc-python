@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import io
 from pathlib import Path
 from datetime import datetime
 
-import fitz  # PyMuPDF
+import pypdfium2 as pdfium
 from PIL import Image
 import yaml
 from tqdm import tqdm
@@ -38,27 +37,32 @@ def parse_resize(resize_str: str | None) -> tuple[int, int] | None:
 
 def convert_pdf(pdf_path: Path, dpi: int, color_mode: str, resize_to: tuple[int, int] | None, fmt: str) -> list[Path]:
     outputs: list[Path] = []
-    doc = fitz.open(pdf_path)
+    pdf = pdfium.PdfDocument(str(pdf_path))
     try:
-        for page_index in range(len(doc)):
-            page = doc[page_index]
-            pix = page.get_pixmap(dpi=dpi)
-            pil_img = Image.open(io.BytesIO(pix.tobytes("png")))
+        scale = max(float(dpi) / 72.0, 0.1)
+        for page_index in range(len(pdf)):
+            page = pdf.get_page(page_index)
+            try:
+                # Render page to PIL at target DPI via scale
+                bitmap = page.render(scale=scale)
+                pil_img = bitmap.to_pil()
 
-            if color_mode.upper() in {"RGB", "L"}:
-                pil_img = pil_img.convert(color_mode.upper())
-            else:
-                raise ValueError(f"Unsupported color_mode: {color_mode}")
+                if color_mode.upper() in {"RGB", "L"}:
+                    pil_img = pil_img.convert(color_mode.upper())
+                else:
+                    raise ValueError(f"Unsupported color_mode: {color_mode}")
 
-            if resize_to:
-                pil_img = pil_img.resize(resize_to, Image.LANCZOS)
+                if resize_to:
+                    pil_img = pil_img.resize(resize_to, Image.LANCZOS)
 
-            out_name = f"{pdf_path.stem}_p{page_index + 1}.{fmt.lower()}"
-            out_path = OUT_IMG_DIR / out_name
-            pil_img.save(out_path, format=fmt.upper())
-            outputs.append(out_path)
+                out_name = f"{pdf_path.stem}_p{page_index + 1}.{fmt.lower()}"
+                out_path = OUT_IMG_DIR / out_name
+                pil_img.save(out_path, format=fmt.upper())
+                outputs.append(out_path)
+            finally:
+                page.close()
     finally:
-        doc.close()
+        pdf.close()
     return outputs
 
 

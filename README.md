@@ -3,7 +3,7 @@
 End-to-end object detection pipeline on PDF-derived images with Ultralytics YOLO and DVC.
 
 ### Features
-- PDF to image conversion with PyMuPDF and Pillow
+- PDF to image conversion with pypdfium2 (BSD-3) and Pillow
 - Manual YOLO-format annotation and dataset split utilities
 - Training with Ultralytics YOLOv8/YOLO11, DVCLive metrics, and experiment tracking via DVC
 - Reproducible pipelines with `dvc.yaml`, `params.yaml`, and Git/DVC versioning
@@ -53,6 +53,8 @@ Best practices:
 - 300 DPI preserves fine details; PNG avoids artifacts
 - Grayscale (`L`) if color is irrelevant
 - Convert per page for scalability; validate outputs
+
+Licensing note: pypdfium2 is BSD-3 licensed and suitable for commercial use.
 
 ### Annotate
 Use LabelImg/Roboflow to create YOLO txt labels for each image in the same basename. Place labels alongside images or import into `data/raw/labels` and split later.
