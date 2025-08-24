@@ -3,9 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 
-# DVC and data artifacts (tracked via DVC, not Git)
-data/raw/
-data/pdfs/
+# DVC and data artifacts (tracked via DVC, not Git). Let DVC manage .gitignore under these dirs.
 models/
 reports/ultralytics/
 **/runs/
