@@ -83,6 +83,21 @@ def main() -> None:
             # create minimal CSV if parsing failed
             pd.DataFrame([{"status": "completed"}]).to_csv(metrics_csv, index=False)
 
+        # Log key metrics to DVCLive
+        try:
+            if isinstance(metrics_json, list):
+                for step_idx, row in enumerate(metrics_json, start=1):
+                    for k, v in row.items():
+                        if isinstance(v, (int, float)):
+                            live.log_metric(k, v, step=step_idx)
+            elif isinstance(metrics_json, dict):
+                for k, v in metrics_json.items():
+                    if isinstance(v, (int, float)):
+                        live.log_metric(k, v, step=epochs)
+            live.next_step()
+        except Exception:
+            pass
+
         # Save params for traceability
         params_out = REPORTS_DIR / "train_params.yaml"
         with open(params_out, "w", encoding="utf-8") as f:
