@@ -1,0 +1,20 @@
+conversion:
+  dpi: 300
+  format: "png"        # png or jpg
+  color_mode: "RGB"    # RGB or L
+  resize: "1000x1000"  # WIDTHxHEIGHT or null for no resize
+
+training:
+  model: "yolov8n.pt"
+  epochs: 100
+  batch: 16
+  imgsz: 640
+  optimizer: "auto"
+  patience: 50
+  cache: true
+  multi_scale: false
+  workers: 4
+  device: ""           # e.g., "cpu", "0" for first GPU; empty = auto
+  project: "reports/ultralytics"
+  name: "exp"
+

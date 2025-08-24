@@ -1,0 +1,8 @@
+path: data/raw
+train: data/raw/train/images
+val: data/raw/valid/images
+test: data/raw/test/images
+
+names: ["table", "figure", "text"]
+nc: 3
+

@@ -1,0 +1,27 @@
+stages:
+  convert:
+    cmd: python src/convert_pdfs.py
+    deps:
+      - data/pdfs
+      - src/convert_pdfs.py
+      - params.yaml
+    params:
+      - conversion
+    outs:
+      - data/raw/images
+      - reports/convert_log.txt
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - data/raw
+      - data/data.yaml
+      - src/train.py
+      - params.yaml
+    params:
+      - training
+    outs:
+      - models/best.pt
+      - reports/train_metrics.csv
+      - reports/train_params.yaml
+
