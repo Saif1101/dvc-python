@@ -22,6 +22,7 @@ stages:
       - training
     outs:
       - models/best.pt
+      - models/best.onnx
       - reports/train_metrics.csv
       - reports/train_params.yaml
 

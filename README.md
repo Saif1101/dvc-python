@@ -5,7 +5,7 @@ End-to-end object detection pipeline on PDF-derived images with Ultralytics YOLO
 ### Features
 - PDF to image conversion with pypdfium2 (BSD-3) and Pillow
 - Manual YOLO-format annotation and dataset split utilities
-- Training with Ultralytics YOLOv8/YOLO11, DVCLive metrics, and experiment tracking via DVC
+- Training with Ultralytics YOLOv8/YOLO11 or Roboflow RFDETR, DVCLive metrics, and experiment tracking via DVC
 - Reproducible pipelines with `dvc.yaml`, `params.yaml`, and Git/DVC versioning
 
 ### Setup
@@ -63,11 +63,26 @@ Use LabelImg/Roboflow to create YOLO txt labels for each image in the same basen
 Use utilities in `src/utils.py` to split 70/20/10 into `data/raw/train|valid|test` and update `data/data.yaml` class names.
 
 ### Train
+Ultralytics (default):
+```bash
+python src/train.py
+```
+RFDETR:
+1) Ensure COCO-format datasets under `data/raw/{train,valid,test}` with `_annotations.coco.json`.
+2) Set in `params.yaml`:
+```yaml
+training:
+  model_type: rfdetr
+rfdetr:
+  dataset_dir: data/raw
+  output_dir: reports/rfdetr_runs
+```
+3) Run:
 ```bash
 python src/train.py
 ```
 Artifacts:
-- `models/best.pt`
+- `models/best.pt`, `models/best.onnx` (when Ultralytics with ONNX export enabled)
 - `reports/train_metrics.csv`, `reports/train_params.yaml`
 - Ultralytics run dir under `reports/ultralytics/`
 

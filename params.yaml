@@ -5,7 +5,8 @@ conversion:
   resize: "1000x1000"  # WIDTHxHEIGHT or null for no resize
 
 training:
-  model: "yolov8n.pt"
+  model_type: "ultralytics"   # ultralytics | rfdetr
+  model: "yolov8n.pt"         # used when model_type=ultralytics
   epochs: 100
   batch: 16
   imgsz: 640
@@ -17,4 +18,15 @@ training:
   device: ""           # e.g., "cpu", "0" for first GPU; empty = auto
   project: "reports/ultralytics"
   name: "exp"
+  onnx_export: true
+  onnx_opset: 12
+  onnx_dynamic: true
+
+rfdetr:
+  dataset_dir: "data/raw"     # expects COCO-format splits under this dir
+  output_dir: "reports/rfdetr_runs"
+  epochs: 50
+  batch_size: 4
+  grad_accum_steps: 4
+  lr: 1e-4
 

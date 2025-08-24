@@ -9,4 +9,5 @@ pillow>=10.0.0
 pyyaml>=6.0.1
 pandas>=2.1.0
 tqdm>=4.66.0
+rfdetr>=0.1.0
 
