@@ -1,5 +1,16 @@
 from __future__ import annotations
 
+"""Training entry-point supporting Ultralytics YOLO and Roboflow RFDETR.
+
+Behavior is controlled by ``params.yaml``:
+- training.model_type: "ultralytics" or "rfdetr"
+- Ultralytics settings under ``training`` (epochs, batch, imgsz, etc.)
+- RFDETR settings under ``rfdetr`` (dataset_dir, output_dir, epochs, ...)
+
+When Ultralytics is used and ``training.onnx_export: true``, the script exports
+``models/best.onnx`` after training for deployment.
+"""
+
 from pathlib import Path
 import json
 import yaml

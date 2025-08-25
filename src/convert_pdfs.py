@@ -1,5 +1,20 @@
 from __future__ import annotations
 
+"""PDF-to-image conversion stage.
+
+This module renders each page of every PDF in ``data/pdfs/`` into an image
+using ``pypdfium2`` (BSD-3) and saves outputs to ``data/raw/images/``.
+
+Parameters are read from ``params.yaml`` under ``conversion``:
+- dpi: target rendering DPI (recommended 300 for document detail)
+- format: output image format (png or jpg)
+- color_mode: RGB (color) or L (grayscale)
+- resize: optional "WIDTHxHEIGHT" to resample after rendering
+
+The script appends a human-readable log to ``reports/convert_log.txt`` and is
+intended to be executed as a DVC pipeline stage or directly via Python.
+"""
+
 from pathlib import Path
 from datetime import datetime
 
@@ -19,11 +34,19 @@ LOG_PATH = ROOT / "reports" / "convert_log.txt"
 
 
 def load_params(path: Path) -> dict:
+    """Load YAML parameters from ``path``.
+
+    Returns an empty dict if the file is empty.
+    """
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 
 def parse_resize(resize_str: str | None) -> tuple[int, int] | None:
+    """Parse a ``WIDTHxHEIGHT`` string into a tuple or return ``None``.
+
+    Raises ValueError when the format is invalid.
+    """
     if not resize_str:
         return None
     try:
@@ -36,6 +59,10 @@ def parse_resize(resize_str: str | None) -> tuple[int, int] | None:
 
 
 def convert_pdf(pdf_path: Path, dpi: int, color_mode: str, resize_to: tuple[int, int] | None, fmt: str) -> list[Path]:
+    """Render one PDF into per-page images.
+
+    Returns a list of output paths written to ``OUT_IMG_DIR``.
+    """
     outputs: list[Path] = []
     pdf = pdfium.PdfDocument(str(pdf_path))
     try:
@@ -43,7 +70,6 @@ def convert_pdf(pdf_path: Path, dpi: int, color_mode: str, resize_to: tuple[int,
         for page_index in range(len(pdf)):
             page = pdf.get_page(page_index)
             try:
-                # Render page to PIL at target DPI via scale
                 bitmap = page.render(scale=scale)
                 pil_img = bitmap.to_pil()
 
@@ -67,6 +93,11 @@ def convert_pdf(pdf_path: Path, dpi: int, color_mode: str, resize_to: tuple[int,
 
 
 def main() -> None:
+    """Entry-point for the conversion stage.
+
+    Ensures output directories, reads parameters, converts PDFs, and logs a
+    summary into ``reports/convert_log.txt``.
+    """
     ensure_dir(OUT_IMG_DIR)
     ensure_dir(LOG_PATH.parent)
 

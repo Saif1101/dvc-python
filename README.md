@@ -37,6 +37,12 @@ data/
 data/data.yaml         # YOLO dataset config
 ```
 
+### Documentation
+- See `docs/USAGE.md` for common commands
+- See `docs/PIPELINE.md` for pipeline stages and experiments
+- See `docs/DATA.md` for formats, structure, and DVC tracking
+- See `CONTRIBUTING.md` for style and workflow
+
 ### Parameters
 Edit `params.yaml`:
 - conversion: `dpi`, `format`, `color_mode`, `resize`

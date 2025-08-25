@@ -7,15 +7,18 @@ import yaml
 
 
 def load_params(params_path: Path) -> Dict:
+    """Load YAML parameters from ``params.yaml`` file."""
     with open(params_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 def ensure_dir(path: Path) -> None:
+    """Create directory ``path`` if it does not exist (including parents)."""
     path.mkdir(parents=True, exist_ok=True)
 
 
 def parse_resize(resize_str: str | None) -> Tuple[int, int] | None:
+    """Parse a ``WIDTHxHEIGHT`` string into integers or return ``None``."""
     if not resize_str:
         return None
     try:
@@ -28,6 +31,7 @@ def parse_resize(resize_str: str | None) -> Tuple[int, int] | None:
 
 
 def list_image_label_pairs(images_dir: Path, labels_dir: Path) -> List[Tuple[Path, Path | None]]:
+    """List image files and their matching YOLO label file (if present)."""
     image_exts = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
     pairs: List[Tuple[Path, Path | None]] = []
     for img in sorted(images_dir.glob("**/*")):
@@ -43,6 +47,11 @@ def split_dataset(
     out_dir: Path,
     splits: Tuple[float, float, float] = (0.7, 0.2, 0.1),
 ) -> Dict[str, Dict[str, Path]]:
+    """Split a YOLO dataset into train/valid/test subfolders.
+
+    The function preserves file basenames and copies corresponding labels when
+    present. Splits are computed by index, not randomized.
+    """
     assert abs(sum(splits) - 1.0) < 1e-6, "Splits must sum to 1.0"
 
     ensure_dir(out_dir / "train" / "images")
@@ -79,6 +88,7 @@ def split_dataset(
 
 
 def update_data_yaml(data_yaml_path: Path, class_names: List[str]) -> None:
+    """Update YOLO data.yaml with class names and count."""
     with open(data_yaml_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     data["names"] = list(class_names)
