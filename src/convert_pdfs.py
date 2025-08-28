@@ -23,7 +23,7 @@ from PIL import Image
 import yaml
 from tqdm import tqdm
 
-from utils import ensure_dir
+from utils import ensure_dir, parse_resize
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,21 +41,6 @@ def load_params(path: Path) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
-
-def parse_resize(resize_str: str | None) -> tuple[int, int] | None:
-    """Parse a ``WIDTHxHEIGHT`` string into a tuple or return ``None``.
-
-    Raises ValueError when the format is invalid.
-    """
-    if not resize_str:
-        return None
-    try:
-        w_str, h_str = str(resize_str).lower().split("x")
-        return int(w_str), int(h_str)
-    except Exception as exc:
-        raise ValueError(
-            f"Invalid resize specification: {resize_str!r}. Use 'WIDTHxHEIGHT' or leave empty."
-        ) from exc
 
 
 def convert_pdf(pdf_path: Path, dpi: int, color_mode: str, resize_to: tuple[int, int] | None, fmt: str) -> list[Path]:

@@ -22,6 +22,14 @@ training:
   onnx_opset: 12
   onnx_dynamic: true
 
+mlflow:
+  enabled: true
+  tracking_uri: ""             # leave empty for local ./mlruns, or set to http(s) URI
+  experiment_name: "YOLO-DVC"
+  run_name: "${training.name}"  # defaults to training.name if left as-is
+  registry_uri: ""             # optional model registry URI
+  log_artifacts: true          # log models and reports as artifacts
+
 rfdetr:
   dataset_dir: "data/raw"     # expects COCO-format splits under this dir
   output_dir: "reports/rfdetr_runs"
@@ -29,4 +37,5 @@ rfdetr:
   batch_size: 4
   grad_accum_steps: 4
   lr: 1e-4
+
 
